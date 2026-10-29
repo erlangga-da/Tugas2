@@ -82,8 +82,11 @@
             <div class="form-tracking">
                 <input id="resi" type="text" placeholder="Contoh : DO2026-001">
                 <button id="tracking" class="btn-primary">Lacak</button>
+                <button @click="showPopup" id="tracking" class="btn-secondary"
+                    style="text-wrap: nowrap;">Tambah</button>
             </div>
         </div>
+        <!-- tracker resinya -->
         <div id="resiTrack" class="container progress hide">
             <div id="tracking-history" class="left-container">
             </div>
@@ -121,6 +124,52 @@
                     <p id="total" class="value">-</p>
                 </div>
             </div>
+        </div>
+        <!-- popup tambah/edit buku -->
+        <div v-if="isBookPopupVisible" class="book-popup">
+            <section class="book-popup-content" role="dialog">
+                <h2>Tambah Order</h2>
+                <form class="book-form" @submit.prevent="saveBook">
+                    <label>
+                        NIM
+                        <input v-model.trim="bookForm.kode" type="text" required>
+                    </label>
+                    <label>
+                        Nama Penerima
+                        <input v-model.trim="bookForm.judul" type="text" required>
+                    </label>
+                    <label>
+                        Ekspedisi
+                        <select v-model="bookForm.kategori" required>
+                            <option disabled value="">Pilih kategori</option>
+                            <option v-for="kategori in kategoriList" :key="kategori" :value="kategori">
+                                {{ kategori }}
+                            </option>
+                        </select>
+                    </label>
+                    <label>
+                        Paket
+                        <select v-model="bookForm.upbjj" required>
+                            <option disabled value="">Pilih UPBJJ</option>
+                            <option v-for="upbjj in upbjjList" :key="upbjj" :value="upbjj">
+                                {{ upbjj }}
+                            </option>
+                        </select>
+                    </label>
+                    <label>
+                        Tanggal Pengiriman
+                        <input v-model.number="bookForm.qty" type="number" min="0" required>
+                    </label>
+                    <label>
+                        Harga
+                        <input v-model.number="bookForm.safety" type="number" min="0" required disabled>
+                    </label>
+                    <div class="book-form-actions">
+                        <button type="button" class="btn-secondary" @click="closeBookPopup">Batal</button>
+                        <button type="submit" class="btn-primary">Tambah Order</button>
+                    </div>
+                </form>
+            </section>
         </div>
     </div>
     <script src="js/dataBahanAjar.js"></script>

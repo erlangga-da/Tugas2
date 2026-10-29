@@ -162,8 +162,8 @@
             </table>
         </div>
         <!-- popup -->
-        <div v-if="isBookPopupVisible" class="book-popup" @click.self="closeBookPopup">
-            <section class="book-popup-content" role="dialog" aria-modal="true">
+        <div v-if="isBookPopupVisible" class="book-popup">
+            <section class="book-popup-content" role="dialog">
                 <h2>{{ editingBookCode ? 'Edit Data Buku' : 'Tambah Data Buku' }}</h2>
                 <form class="book-form" @submit.prevent="saveBook">
                     <label>
