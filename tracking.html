@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Lacak Pengiriman SITTA</title>
     <link rel="stylesheet" href="./css/reset.css">
     <link rel="stylesheet" href="./css/navbar.css">
     <link rel="stylesheet" href="./css/dashboard.css">
@@ -73,99 +73,114 @@
             </a>
         </div>
     </nav>
-    <div id="app" class="main-container">
+    <div id="app" class="main-container tracking-page">
         <div class="container tracking">
             <div class="text-container">
                 <h1>Lacak Pengiriman</h1>
                 <p>Masukkan nomor resi pengiriman untuk melacak perjalanan paket Anda.</p>
             </div>
             <div class="form-tracking">
-                <input id="resi" type="text" placeholder="Contoh : DO2026-001">
-                <button id="tracking" class="btn-primary">Lacak</button>
-                <button @click="showPopup" id="tracking" class="btn-secondary"
-                    style="text-wrap: nowrap;">Tambah</button>
+                <input id="resi" v-model.trim="trackingResi" @keyup.enter="trackShipment" type="text"
+                    placeholder="Contoh: DO2025-0001" aria-label="Nomor resi pengiriman">
+                <button id="tracking" @click="trackShipment" class="btn-primary">Lacak</button>
+                <button id="add-order" @click="showOrderPopup" class="btn-secondary"
+                    style="text-wrap: nowrap;">Tambah Order</button>
             </div>
+            <p v-if="trackingError" class="tracking-error" role="alert">{{ trackingError }}</p>
         </div>
         <!-- tracker resinya -->
-        <div id="resiTrack" class="container progress hide">
+        <div v-if="currentTracking" id="resiTrack" class="container progress">
             <div id="tracking-history" class="left-container">
+                <h2>Riwayat Pengiriman</h2>
+                <div v-for="(event, index) in currentTracking.perjalanan" :key="event.waktu + index"
+                    class="list-progress">
+                    <div class="dot-track" aria-hidden="true">
+                        <div class="detail-dot"></div>
+                        <div class="detail-line"></div>
+                    </div>
+                    <div class="text-container">
+                        <p class="value">{{ event.keterangan }}</p>
+                        <p class="label">{{ event.waktu }}</p>
+                    </div>
+                </div>
             </div>
             <div class="right-container">
                 <div class="text-container">
                     <p class="label">Nomor Resi</p>
-                    <p id="nomorDO" class="value">-</p>
+                    <p id="nomorDO" class="value">{{ currentTrackingNumber }}</p>
                 </div>
                 <div class="text-container">
                     <p class="label">Jasa Ekspedisi</p>
-                    <p id="ekspedisi" class="value">-</p>
+                    <p id="ekspedisi" class="value">{{ currentTracking.ekspedisi }}</p>
                 </div>
                 <div class="text-container">
                     <p class="label">Kode Paket</p>
-                    <p id="paket" class="value">-</p>
+                    <p id="paket" class="value">{{ currentTracking.paket }}</p>
                 </div>
                 <div class="text-container">
                     <p class="label">Tanggal Pengiriman</p>
-                    <p id="tanggalKirim" class="value">-</p>
+                    <p id="tanggalKirim" class="value">{{ currentTracking.tanggalKirim }}</p>
                 </div>
                 <div class="text-container">
                     <p class="label">Status</p>
-                    <p id="status" class="value">-</p>
+                    <p id="status" class="value">{{ currentTracking.status }}</p>
                 </div>
                 <div class="text-container">
                     <p class="label">NIM</p>
-                    <p id="nim" class="value">-</p>
+                    <p id="nim" class="value">{{ currentTracking.nim }}</p>
                 </div>
                 <div class="text-container">
                     <p class="label">Nama Penerima</p>
-                    <p id="nama" class="value">-</p>
+                    <p id="nama" class="value">{{ currentTracking.nama }}</p>
                 </div>
                 <div class="text-container">
                     <p class="label">Total</p>
-                    <p id="total" class="value">-</p>
+                    <p id="total" class="value">Rp {{ currentTracking.total.toLocaleString('id-ID') }}</p>
                 </div>
             </div>
         </div>
-        <!-- popup tambah/edit buku -->
-        <div v-if="isBookPopupVisible" class="book-popup">
-            <section class="book-popup-content" role="dialog">
-                <h2>Tambah Order</h2>
-                <form class="book-form" @submit.prevent="saveBook">
+        <div v-if="isOrderPopupVisible" class="book-popup">
+            <section class="book-popup-content" role="dialog" aria-modal="true" aria-labelledby="order-popup-title">
+                <h2 id="order-popup-title">Tambah Order</h2>
+                <form class="book-form" @submit.prevent="saveOrder">
                     <label>
                         NIM
-                        <input v-model.trim="bookForm.kode" type="text" required>
+                        <input v-model.trim="orderForm.nim" type="text" required>
                     </label>
                     <label>
                         Nama Penerima
-                        <input v-model.trim="bookForm.judul" type="text" required>
+                        <input v-model.trim="orderForm.nama" type="text" required>
                     </label>
                     <label>
                         Ekspedisi
-                        <select v-model="bookForm.kategori" required>
-                            <option disabled value="">Pilih kategori</option>
-                            <option v-for="kategori in kategoriList" :key="kategori" :value="kategori">
-                                {{ kategori }}
+                        <select v-model="orderForm.ekspedisi" required>
+                            <option disabled value="">Pilih ekspedisi</option>
+                            <option v-for="ekspedisi in pengirimanList" :key="ekspedisi.kode" :value="ekspedisi.nama">
+                                {{ ekspedisi.nama }}
                             </option>
                         </select>
                     </label>
                     <label>
                         Paket
-                        <select v-model="bookForm.upbjj" required>
-                            <option disabled value="">Pilih UPBJJ</option>
-                            <option v-for="upbjj in upbjjList" :key="upbjj" :value="upbjj">
-                                {{ upbjj }}
+                        <select v-model="orderForm.paket" required>
+                            <option disabled value="">Pilih paket</option>
+                            <option v-for="item in paket" :key="item.kode" :value="item.kode">
+                                {{ item.nama }} - Rp {{ item.harga.toLocaleString('id-ID') }}
                             </option>
                         </select>
                     </label>
                     <label>
                         Tanggal Pengiriman
-                        <input v-model.number="bookForm.qty" type="number" min="0" required>
+                        <input v-model="orderForm.tanggalKirim" type="date" required>
                     </label>
                     <label>
-                        Harga
-                        <input v-model.number="bookForm.safety" type="number" min="0" required disabled>
+                        Total
+                        <input :value="selectedOrderPackage ? 'Rp ' + selectedOrderPackage.harga.toLocaleString('id-ID') : ''"
+                            type="text" readonly placeholder="Pilih paket">
                     </label>
+                    <p v-if="orderError" class="tracking-error" role="alert">{{ orderError }}</p>
                     <div class="book-form-actions">
-                        <button type="button" class="btn-secondary" @click="closeBookPopup">Batal</button>
+                        <button type="button" class="btn-secondary" @click="closeOrderPopup">Batal</button>
                         <button type="submit" class="btn-primary">Tambah Order</button>
                     </div>
                 </form>

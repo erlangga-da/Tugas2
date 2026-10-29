@@ -14,6 +14,19 @@ body {
     margin-top: 2rem;
 }
 
+.main-container.tracking-page {
+    width: min(700px, calc(100% - 2rem));
+}
+
+.tracking-page .container {
+    box-sizing: border-box;
+}
+
+.tracking-error {
+    margin-top: .75rem;
+    color: #b42318 !important;
+}
+
 .container {
     /* background-color: aqua; */
     width: 100%;
@@ -233,6 +246,23 @@ body {
     flex-direction: row-reverse;
 }
 
+.tracking-page .container.progress {
+    gap: 1rem;
+}
+
+.tracking-page .left-container {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+    box-sizing: border-box;
+}
+
+.tracking-page .right-container {
+    flex: 0 0 30%;
+    width: auto;
+    box-sizing: border-box;
+}
+
 .left-container {
     padding: 1.5rem;
     width: 70%;
@@ -308,6 +338,27 @@ body {
 .hide,
 .list-progress:last-child .detail-line {
     display: none !important;
+}
+
+@media (max-width: 640px) {
+    .tracking-page .form-tracking {
+        flex-wrap: wrap;
+    }
+
+    .tracking-page .form-tracking input {
+        flex-basis: 100%;
+        box-sizing: border-box;
+    }
+
+    .tracking-page .container.progress {
+        flex-direction: column-reverse;
+    }
+
+    .tracking-page .left-container,
+    .tracking-page .right-container {
+        flex: auto;
+        width: 100%;
+    }
 }
 
 /* table */

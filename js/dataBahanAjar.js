@@ -19,6 +19,19 @@ var app = new Vue({
     kategoriList: ["MK Wajib", "MK Pilihan", "Praktikum", "Problem-Based"],
     isBookPopupVisible: false,
     editingBookCode: null,
+    isOrderPopupVisible: false,
+    trackingResi: "",
+    currentTracking: null,
+    currentTrackingNumber: "",
+    trackingError: "",
+    orderError: "",
+    orderForm: {
+      nim: "",
+      nama: "",
+      ekspedisi: "",
+      paket: "",
+      tanggalKirim: ""
+    },
     bookForm: {
       kode: "",
       judul: "",
@@ -97,6 +110,9 @@ var app = new Vue({
     }
   },
   computed: {
+    selectedOrderPackage: function () {
+      return this.paket.find(item => item.kode === this.orderForm.paket) || null;
+    },
     stokTampil: function () {
       var result = this.stok;
 
@@ -125,6 +141,94 @@ var app = new Vue({
     }
   },
   methods: {
+    showOrderPopup: function () {
+      var today = new Date();
+      var year = today.getFullYear();
+      var month = String(today.getMonth() + 1).padStart(2, "0");
+      var day = String(today.getDate()).padStart(2, "0");
+
+      this.orderForm = {
+        nim: "",
+        nama: "",
+        ekspedisi: "",
+        paket: "",
+        tanggalKirim: year + "-" + month + "-" + day
+      };
+      this.orderError = "";
+      this.isOrderPopupVisible = true;
+    },
+    closeOrderPopup: function () {
+      this.isOrderPopupVisible = false;
+      this.orderError = "";
+    },
+    saveOrder: function () {
+      var selectedExpedition = this.pengirimanList.find(item => item.nama === this.orderForm.ekspedisi);
+      var selectedPackage = this.paket.find(item => item.kode === this.orderForm.paket);
+
+      if (!this.orderForm.nim.trim() || !this.orderForm.nama.trim() ||
+          !/^\d{4}-\d{2}-\d{2}$/.test(this.orderForm.tanggalKirim)) {
+        this.orderError = "Lengkapi NIM, nama penerima, dan tanggal pengiriman.";
+        return;
+      }
+
+      if (!selectedExpedition || !selectedPackage) {
+        this.orderError = "Pilih ekspedisi dan paket yang valid.";
+        return;
+      }
+
+      var year = this.orderForm.tanggalKirim.slice(0, 4);
+      var orderPrefix = "DO" + year + "-";
+      var highestSequence = Object.keys(this.tracking).reduce(function (highest, orderNumber) {
+        if (orderNumber.indexOf(orderPrefix) !== 0) return highest;
+        var sequence = Number(orderNumber.slice(orderPrefix.length));
+        return Number.isInteger(sequence) ? Math.max(highest, sequence) : highest;
+      }, 0);
+      var orderNumber = orderPrefix + String(highestSequence + 1).padStart(4, "0");
+      var now = new Date();
+      var timestamp = now.getFullYear() + "-" +
+        String(now.getMonth() + 1).padStart(2, "0") + "-" +
+        String(now.getDate()).padStart(2, "0") + " " +
+        String(now.getHours()).padStart(2, "0") + ":" +
+        String(now.getMinutes()).padStart(2, "0") + ":" +
+        String(now.getSeconds()).padStart(2, "0");
+
+      this.$set(this.tracking, orderNumber, {
+        nim: this.orderForm.nim.trim(),
+        nama: this.orderForm.nama.trim(),
+        status: "Pesanan Dibuat",
+        ekspedisi: selectedExpedition.nama,
+        tanggalKirim: this.orderForm.tanggalKirim,
+        paket: selectedPackage.kode,
+        total: selectedPackage.harga,
+        perjalanan: [
+          { waktu: timestamp, keterangan: "Order dibuat" }
+        ]
+      });
+
+      this.closeOrderPopup();
+      this.trackingResi = orderNumber;
+      this.trackShipment();
+    },
+    trackShipment: function () {
+      var resi = this.trackingResi.trim().toUpperCase();
+      this.currentTracking = null;
+      this.currentTrackingNumber = "";
+      this.trackingError = "";
+
+      if (!resi) {
+        this.trackingError = "Masukkan nomor resi terlebih dahulu.";
+        return;
+      }
+
+      var shipment = this.tracking[resi];
+      if (!shipment) {
+        this.trackingError = "Data pengiriman dengan nomor resi tersebut tidak ditemukan.";
+        return;
+      }
+
+      this.currentTracking = shipment;
+      this.currentTrackingNumber = resi;
+    },
     showPopup: function () {
       this.editingBookCode = null;
       this.bookForm = this.emptyBookForm();
