@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="./css/navbar.css">
+    <link rel="stylesheet" href="./css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+
+<body>
+    <nav>
+        <p id="logo">SITTA</p>
+        <div class="menu">
+            <a href="dashboard.html" class="link">
+                <div class="content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#C3C5C9" viewBox="0 0 256 256">
+                        <path d="M208,32V192H72a24,24,0,0,0-24,24V56A24,24,0,0,1,72,32h40v96l32-24,32,24V32Z"
+                            opacity="0.2"></path>
+                        <path
+                            d="M208,24H72A32,32,0,0,0,40,56V224a8,8,0,0,0,8,8H192a8,8,0,0,0,0-16H56a16,16,0,0,1,16-16H208a8,8,0,0,0,8-8V32A8,8,0,0,0,208,24ZM120,40h48v72L148.79,97.6a8,8,0,0,0-9.6,0L120,112Zm80,144H72a31.82,31.82,0,0,0-16,4.29V56A16,16,0,0,1,72,40h32v88a8,8,0,0,0,12.8,6.4L144,114l27.21,20.4A8,8,0,0,0,176,136a8.1,8.1,0,0,0,3.58-.84A8,8,0,0,0,184,128V40h16Z">
+                        </path>
+                    </svg>
+                    <p>Stok Buku</p>
+                </div>
+            </a>
+            <a href="#" class="link active">
+                <div class="content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#FFFFFF" viewBox="0 0 256 256">
+                        <path d="M192,112a80,80,0,1,1-80-80A80,80,0,0,1,192,112Z" opacity="0.2"></path>
+                        <path
+                            d="M229.66,218.34,179.6,168.28a88.21,88.21,0,1,0-11.32,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z">
+                        </path>
+                    </svg>
+                    <p>Tracking Pengiriman</p>
+                </div>
+            </a>
+            <div id="dropdown" class="link">
+                <div class="content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#C3C5C9" viewBox="0 0 256 256">
+                        <path
+                            d="M208,48V216a8,8,0,0,1-8,8H56a8,8,0,0,1-8-8V48a8,8,0,0,1,8-8H96a39.83,39.83,0,0,0-8,24v8h80V64a39.83,39.83,0,0,0-8-24h40A8,8,0,0,1,208,48Z"
+                            opacity="0.2"></path>
+                        <path
+                            d="M168,152a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,152Zm-8-40H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Zm56-64V216a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V48A16,16,0,0,1,56,32H92.26a47.92,47.92,0,0,1,71.48,0H200A16,16,0,0,1,216,48ZM96,64h64a32,32,0,0,0-64,0ZM200,48H173.25A47.93,47.93,0,0,1,176,64v8a8,8,0,0,1-8,8H88a8,8,0,0,1-8-8V64a47.93,47.93,0,0,1,2.75-16H56V216H200Z">
+                        </path>
+                    </svg>
+                    <p>Laporan</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#C3C5C9" viewBox="0 0 256 256">
+                        <path
+                            d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z">
+                        </path>
+                    </svg>
+                    <div id="dropdown-menu" class="dropdown-menu">
+                        <a href="#">Monitoring Progress DO Bahan Ajar</a>
+                        <a href="#">Rekap Bahan Ajar</a>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="link">
+                <div class="content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#C3C5C9" viewBox="0 0 256 256">
+                        <path d="M216,128a88,88,0,1,1-88-88A88,88,0,0,1,216,128Z" opacity="0.2"></path>
+                        <path
+                            d="M136,80v43.47l36.12,21.67a8,8,0,0,1-8.24,13.72l-40-24A8,8,0,0,1,120,128V80a8,8,0,0,1,16,0Zm-8-48A95.44,95.44,0,0,0,60.08,60.15C52.81,67.51,46.35,74.59,40,82V64a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H49c7.15-8.42,14.27-16.35,22.39-24.57a80,80,0,1,1,1.66,114.75,8,8,0,1,0-11,11.64A96,96,0,1,0,128,32Z">
+                        </path>
+                    </svg>
+                    <p>Histori Transaksi Bahan Ajar</p>
+                </div>
+            </a>
+        </div>
+    </nav>
+    <div id="app" class="main-container">
+        <div class="container tracking">
+            <div class="text-container">
+                <h1>Lacak Pengiriman</h1>
+                <p>Masukkan nomor resi pengiriman untuk melacak perjalanan paket Anda.</p>
+            </div>
+            <div class="form-tracking">
+                <input id="resi" type="text" placeholder="Contoh : DO2026-001">
+                <button id="tracking" class="btn-primary">Lacak</button>
+            </div>
+        </div>
+        <div id="resiTrack" class="container progress hide">
+            <div id="tracking-history" class="left-container">
+            </div>
+            <div class="right-container">
+                <div class="text-container">
+                    <p class="label">Nomor Resi</p>
+                    <p id="nomorDO" class="value">-</p>
+                </div>
+                <div class="text-container">
+                    <p class="label">Jasa Ekspedisi</p>
+                    <p id="ekspedisi" class="value">-</p>
+                </div>
+                <div class="text-container">
+                    <p class="label">Kode Paket</p>
+                    <p id="paket" class="value">-</p>
+                </div>
+                <div class="text-container">
+                    <p class="label">Tanggal Pengiriman</p>
+                    <p id="tanggalKirim" class="value">-</p>
+                </div>
+                <div class="text-container">
+                    <p class="label">Status</p>
+                    <p id="status" class="value">-</p>
+                </div>
+                <div class="text-container">
+                    <p class="label">NIM</p>
+                    <p id="nim" class="value">-</p>
+                </div>
+                <div class="text-container">
+                    <p class="label">Nama Penerima</p>
+                    <p id="nama" class="value">-</p>
+                </div>
+                <div class="text-container">
+                    <p class="label">Total</p>
+                    <p id="total" class="value">-</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/dataBahanAjar.js"></script>
+</body>
+
+</html>
